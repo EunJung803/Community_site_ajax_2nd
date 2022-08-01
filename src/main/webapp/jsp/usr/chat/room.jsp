@@ -4,7 +4,7 @@
 <%@ include file="../common/head.jspf"%>
 
 <script>
-    function ChatMessages__remove(id) {
+    function ChatMessages__remove(id, btn) {
         //     $.post(
         //         `/usr/chat/deleteMessageAjax/\${id}`, // 주소, action
         //         {
@@ -27,6 +27,8 @@
                 if (data.msg) {
                     alert(data.msg);
                 }
+
+                $(btn).parent().remove();
             },
             dataType: 'json'
         });
@@ -74,7 +76,7 @@
                         &nbsp;
                         <span>\${message.body}</span>
                         &nbsp;
-                        <a onclick="if ( !confirm('정말로 삭제하시겠습니까?') ) ChatMessages__remove(\${message.id}); return false;" class="px-3 cursor-pointer hover:underline hover:text-[red] mr-2">삭제</a>
+                        <a onclick="if ( confirm('정말로 삭제하시겠습니까?') ) ChatMessages__remove(\${message.id}, this); return false;" class="px-3 cursor-pointer hover:underline hover:text-[red] mr-2">삭제</a>
                     </li>
                     `;
                     $('.chat-messages').append(html);
