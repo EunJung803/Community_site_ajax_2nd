@@ -1,5 +1,6 @@
 package com.ll.exam.chat;
 
+import com.ll.exam.chat.dto.ChatMessageDto;
 import com.ll.exam.chat.dto.ChatRoomDto;
 
 import java.util.ArrayList;
