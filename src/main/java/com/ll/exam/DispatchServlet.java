@@ -107,6 +107,8 @@ public class DispatchServlet extends HttpServlet {
         doGet(req, resp);
     }
 
+
+    // _method로 가짜 DELETE 요청을 흉내내는 것을 그만 두고, 진짜 DELETE로 보냄
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         doGet(req, resp);
