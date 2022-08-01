@@ -59,14 +59,9 @@ function ChatRoomSave__submitForm(form) {
         </form>
 
         <ul class="mt-5">
-            <c:forEach items="${messages}" var="message">
-            <li class="flex">
-                <span>메세지 ${message.id} :</span>
-                &nbsp;
-                <span>${message.body}</span>
-                    <a onclick="if ( !confirm('정말로 삭제하시겠습니까?') ) return false;" class="px-3 hover:underline hover:text-[red] mr-2" href="/usr/chat/deleteMessage/${message.id}?_method=DELETE">삭제</a>
-            </li>
-            </c:forEach>
+            <!-- 이 부분에 동적으로(자바스크립트로) 엘리먼트를 만들어서 넣어준다. -->
+            <!-- 필요한 데이터는 ajax로 불러온다. -->
+            <!-- /usr/chat/getMessages/10 => JSON으로 채팅메세지 제공 -->
         </ul>
     </div>
 </section>

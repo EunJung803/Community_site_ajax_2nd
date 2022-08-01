@@ -116,7 +116,28 @@ public class ChatController {
         rq.replace("/usr/chat/roomList", "%d번 채팅방이 삭제되었습니다.".formatted(id));
     }
 
+    // ajax 방식으로 채팅메세지를 리스팅
     public void showRoom(Rq rq) {
+        long id = rq.getLongPathValueByIndex(0, -1);
+
+        if (id == -1) {
+            rq.historyBack("번호를 입력해주세요.");
+            return;
+        }
+
+        ChatRoomDto chatRoomDto = chatService.findRoomById(id);
+
+        if (chatRoomDto == null) {
+            rq.historyBack("존재하지 않는 채팅방 입니다.");
+            return;
+        }
+
+        rq.setAttr("room", chatRoomDto);
+
+        rq.view("usr/chat/room");
+    }
+
+    public void showRoomManual(Rq rq) {
         long id = rq.getLongPathValueByIndex(0, -1);
 
         if (id == -1) {
@@ -135,7 +156,7 @@ public class ChatController {
         rq.setAttr("room", chatRoomDto);
         rq.setAttr("messages", chatMessageDtos);
 
-        rq.view("usr/chat/room");
+        rq.view("usr/chat/roomManual");
     }
 
     public void doWriteMessage(Rq rq) {
