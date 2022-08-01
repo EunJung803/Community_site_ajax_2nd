@@ -215,4 +215,34 @@ public class ChatController {
 
         rq.successJson(chatMessageDtos);
     }
+
+    public void doWriteMessageAjax(Rq rq) {
+        // roomId 구하고
+        long roomId = rq.getLongPathValueByIndex(0, -1);
+
+        if (roomId == -1) {
+            rq.failJson("채팅방 번호를 입력해주세요.");
+            return;
+        }
+
+        ChatRoomDto chatRoom = chatService.findRoomById(roomId);
+
+        if (chatRoom == null) {
+            rq.failJson("존재하지 않는 채팅방 입니다.");
+            return;
+        }
+
+        // body 구하고
+        String body = rq.getParam("body", "");
+
+        if (body.trim().length() == 0) {
+            rq.historyBack("내용을 입력해주세요.");
+            return;
+        }
+
+        long newChatMessageId = chatService.writeMessage(roomId, body);
+
+        // 등록
+        rq.successJson(newChatMessageId);
+    }
 }

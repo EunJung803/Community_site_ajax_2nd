@@ -4,46 +4,62 @@
 <%@ include file="../common/head.jspf"%>
 
 <script>
+    function ChatMessageSave__submitForm(form) {
+        form.body.value = form.body.value.trim();
 
-function ChatMessageSave__submitForm(form) {
-    form.body.value = form.body.value.trim();
+        if ( form.body.value.length == 0 ) {
+            form.body.focus();
 
-    if ( form.body.value.length == 0 ) {
+            return false;
+        }
+
+        // fetch 방식이 아닌, jquery 방식
+        $.post(
+            '/usr/chat/writeMessageAjax/${room.id}', // 주소, action
+            {
+                body: form.body.value // 폼 내용, input name, value
+            },
+            function(data) { // 콜백 메서드, 통신이 완료된 후, 실행
+                // data.resultCode
+                // data.msg
+            },
+            'json' // 받은 데이터를 json 으로 해석하겠다.
+        );
+
+        form.body.value = '';
         form.body.focus();
-
-        return false;
     }
+</script>
 
-    form.submit();
-}
-
-let Chatmsg__lastId = 0;
-function Chatmsg__loadMore() {
-    fetch(`/usr/article/getMessages/${room.id}/?fromId=${Chatmsg__lastId}`)
-        .then(data => data.json())
-        .then(responseData => {
-            const messages = responseData.data;
-            for ( const index in messages ) {
-                const message = messages[index];
-                const html = `
+<script>
+    let Chatmsg__lastId = 0;
+    function Chatmsg__loadMore() {
+        fetch(`/usr/chat/getMessages/${room.id}/?fromId=\${Chatmsg__lastId}`)
+            .then(data => data.json())
+            .then(responseData => {
+                const messages = responseData.data;
+                for ( const index in messages ) {
+                    const message = messages[index];
+                    const html = `
                     <li class="flex">
-                        <span>메세지 ${message.id} :</span>
+                        <span>메세지 \${message.id} :</span>
                         &nbsp;
-                        <span>${message.body}</span>
-                            <a onclick="if ( !confirm('정말로 삭제하시겠습니까?') ) return false;" class="px-3 hover:underline hover:text-[red] mr-2" href="/usr/chat/deleteMessage/${message.id}?_method=DELETE">삭제</a>
+                        <span>\${message.body}</span>
+                        &nbsp;
+                        <a onclick="if ( !confirm('정말로 삭제하시겠습니까?') ) return false;" class="px-3 hover:underline hover:text-[red] mr-2" href="/usr/chat/deleteMessage/${message.id}?_method=DELETE">삭제</a>
                     </li>
-                `;
-                $('.chat-messages').append(html);
-            }
+                    `;
+                    $('.chat-messages').append(html);
+                }
 
-            if ( messages.length > 0 ) {
-                Chatmsg__lastId = messages[messages.length - 1].id;
-            }
-            // ChatMessages__loadMore(); // 즉시 실행
-            setTimeout(Chatmsg__loadMore, 3000); // ChatMessages__loadMore(); 를 3초 뒤에 수행
+                if ( messages.length > 0 ) {
+                    Chatmsg__lastId = messages[messages.length - 1].id;
+                }
+                // ChatMessages__loadMore(); // 즉시 실행
+                setTimeout(Chatmsg__loadMore, 3000); // ChatMessages__loadMore(); 를 3초 뒤에 수행
 
-        });
-}
+            });
+    }
 </script>
 
 <section>
