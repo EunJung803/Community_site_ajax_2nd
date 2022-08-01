@@ -4,6 +4,34 @@
 <%@ include file="../common/head.jspf"%>
 
 <script>
+    function ChatMessages__remove(id) {
+        //     $.post(
+        //         `/usr/chat/deleteMessageAjax/\${id}`, // 주소, action
+        //         {
+        //             _method: "DELETE"
+        //         },
+        //         function(data) {
+        //             if ( data.msg ) {
+        //                 alert(data.msg);
+        //             }
+        //         },
+        //         'json' // 받은 데이터를 json 으로 해석하겠다.
+        //     );
+        // }
+
+        // _method로 가짜 DELETE 요청을 흉내내는 것을 그만 두고, 진짜 DELETE로 보냄
+        $.ajax({
+            url: `/usr/chat/deleteMessageAjax/\${id}`,
+            type: 'DELETE',
+            success: function (data) {
+                if (data.msg) {
+                    alert(data.msg);
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
     function ChatMessageSave__submitForm(form) {
         form.body.value = form.body.value.trim();
 
@@ -46,7 +74,7 @@
                         &nbsp;
                         <span>\${message.body}</span>
                         &nbsp;
-                        <a onclick="if ( !confirm('정말로 삭제하시겠습니까?') ) return false;" class="px-3 hover:underline hover:text-[red] mr-2" href="/usr/chat/deleteMessage/${message.id}?_method=DELETE">삭제</a>
+                        <a onclick="if ( !confirm('정말로 삭제하시겠습니까?') ) ChatMessages__remove(\${message.id}); return false;" class="px-3 cursor-pointer hover:underline hover:text-[red] mr-2">삭제</a>
                     </li>
                     `;
                     $('.chat-messages').append(html);
