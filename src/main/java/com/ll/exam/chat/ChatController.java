@@ -3,7 +3,6 @@ package com.ll.exam.chat;
 import com.ll.exam.Rq;
 import com.ll.exam.chat.dto.ChatMessageDto;
 import com.ll.exam.chat.dto.ChatRoomDto;
-import com.ll.exam.article.dto.ArticleDto;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class ChatController {
         rq.view("usr/chat/createRoom");
     }
 
-    public void doCreateRoom(Rq rq) {
+    public void CreateRoom(Rq rq) {
         String title = rq.getParam("title", "");
         String body = rq.getParam("body", "");
 
@@ -63,7 +62,7 @@ public class ChatController {
         rq.view("usr/chat/modifyRoom");
     }
 
-    public void doModifyRoom(Rq rq) {
+    public void ModifyRoom(Rq rq) {
         long id = rq.getLongPathValueByIndex(0, -1);
 
         if (id == -1) {
@@ -108,7 +107,7 @@ public class ChatController {
         ChatRoomDto chatRoomDto = chatService.findRoomById(id);
 
         if (chatRoomDto == null) {
-            rq.historyBack("해당 글이 존재하지 않습니다.");
+            rq.historyBack("해당 채팅방은 존재하지 않습니다.");
             return;
         }
 
@@ -160,7 +159,7 @@ public class ChatController {
         rq.view("usr/chat/roomManual");
     }
 
-    public void doWriteMessage(Rq rq) {
+    public void WriteMessage(Rq rq) {
         long roomId = rq.getLongPathValueByIndex(0, -1);
 
         if (roomId == -1) {
@@ -216,7 +215,7 @@ public class ChatController {
         rq.successJson(chatMessageDtos);
     }
 
-    public void doWriteMessageAjax(Rq rq) {
+    public void WriteMessageAjax(Rq rq) {
         // roomId 구하고
         long roomId = rq.getLongPathValueByIndex(0, -1);
 
@@ -244,5 +243,27 @@ public class ChatController {
 
         // 등록
         rq.successJson(newChatMessageId);
+    }
+
+    public void deleteMessage(Rq rq) {
+        long id = rq.getLongPathValueByIndex(0, 0);
+
+        if (id == 0) {
+            rq.historyBack("번호를 입력해주세요.");
+            return;
+        }
+
+        ChatMessageDto chatMessageDto = chatService.findMessageById(id);
+
+        if (chatMessageDto == null) {
+            rq.historyBack("해당 메세지가 존재하지 않습니다.");
+            return;
+        }
+
+        long roomId = chatMessageDto.getRoomId();
+
+        chatService.deleteMessage(id);
+
+        rq.replace("/usr/chat/room/%d".formatted(roomId), "%d번 메세지가 삭제되었습니다.".formatted(id));
     }
 }
